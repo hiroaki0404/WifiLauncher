@@ -1,0 +1,17 @@
+# sample
+#
+# ESSID:
+#  login:
+#  password:
+#
+"0033":
+ login: your_id@hotspot
+ password: your_password_for_0033
+
+mobilepoint:
+ login: your_id@mobilepoint
+ password: your_password_for_mobilepoint
+
+livedoor-web:
+ login: your_id@livedoor-web
+ password: your_password_for_livedoor-web

@@ -1,0 +1,16 @@
+# sample
+#
+# [ESSID]
+# cmd=command
+#
+[FON]
+cmd=/bin/true
+
+[0033]
+cmd=./hotspot.rb
+
+[mobilepoint]
+cmd=./loginwisper.rb
+
+[livedoor-web]
+cmd=./loginwisper.rb

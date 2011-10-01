@@ -1,0 +1,40 @@
+#!/bin/sh
+# $Id$
+# \
+cd `dirname "$0"`;exec wish "$0" "$@"
+#
+#
+wm title . "Wifiラウンチャー設定"
+set basedir [exec sh -c "pwd"]
+proc setup {flag} {
+    global basedir
+     if { $flag == 0 } {
+     	exec sh -c "/bin/launchctl stop jp.group.wifilauncher"
+     	exec sh -c "/bin/launchctl unload $basedir/../Resources/jp.group.wifilauncher.plist"
+	exec sh -c "/bin/rm ~/Library/LaunchAgents/jp.group.wifilauncher.plist"
+     } else {
+          exec sh -c " /bin/cp $basedir/../Resources/jp.group.wifilauncher.plist ~/Library/LaunchAgents/ "
+          exec sh -c "/bin/launchctl load  ~/Library/LaunchAgents/jp.group.wifilauncher.plist"
+	  exec sh -c "/bin/launchctl start jp.group.wifilauncher"
+     }
+     exit 0
+}
+
+if { ! [ file exists ~/.wificmd ] } {
+   exec sh -c " /bin/cp $basedir/../Resources/sample.wificmd ~/.wificmd "
+}
+if { ! [ file exists ~/.wifispot.yam ] } {
+   exec sh -c " /bin/cp $basedir/../Resources/sample.wifispot.yam ~/.wifispot.yam "
+}
+exec sh -c " /usr/bin/chmod 0600 ~/.wifispot.yam "
+
+set startup [ file exists ~/Library/LaunchAgents/jp.group.wifilauncher.plist ]
+checkbutton .cb -text "ログイン時に自動起動する" -variable startup -onvalue 1 -offvalue 0
+pack .cb -side top
+frame .f1
+button .f1.bs -text 設定ファイル -command { exec sh -c "/usr/bin/open -e  ~/.wificmd ~/.wifispot.yam" }
+label .f1.ls -text "    "
+button .f1.bok -text OK -command { setup $startup}
+button .f1.bcl -text Cancel -command exit
+pack .f1.bs .f1.ls .f1.bok .f1.bcl -side left
+pack .cb .f1 -side top -fill x
