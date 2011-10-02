@@ -7,6 +7,7 @@ require 'getoptlong'
 require 'net/https'
 require 'uri'
 require 'pp'
+require 'socket'
 
 def usage
   script_name = File.basename( $0 )
@@ -17,7 +18,7 @@ Usage: ruby #{script_name} --essid|-e ESSID
     }
 end
 
-response=loginuri = debug = username = password = essid = nil
+response = loginuri = status = debug = username = password = essid = nil
 
 options = GetoptLong.new(
   [ "--essid", "-e", GetoptLong::REQUIRED_ARGUMENT ],
@@ -33,6 +34,8 @@ begin
         essid = argument
       when "--debug"
         debug = true
+      when "--status"
+        status = true
     end
   }
 rescue => err
@@ -55,6 +58,14 @@ username = URI.encode(yamlWifiSettings[essid]['login'])
 password = URI.encode(yamlWifiSettings[essid]['password'])
 
 # Try to access Google and get login url.
+while status do
+  begin
+    Socket::getaddrinfo('www.google.com', 'www')
+    break
+  rescue => err
+  end
+end
+
 response = Net::HTTP.get_response(URI.parse('http://www.google.com/'))
 if response.code == "302"
   loginurl = URI.parse(response['location']+"&login_name="+username+"&password="+password)
