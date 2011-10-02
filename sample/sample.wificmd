@@ -13,4 +13,4 @@ cmd=./hotspot.rb
 cmd=./loginwisper.rb
 
 [livedoor-web]
-cmd=./loginwisper.rb
+cmd=./livedoorweb.rb

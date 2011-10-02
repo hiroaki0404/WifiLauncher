@@ -13,7 +13,7 @@ def usage
   script_name = File.basename( $0 )
   puts %{
 Usage: ruby #{script_name} --essid|-e ESSID
-                         --status|-s
+                         --status|-s on|off
                          [--debug|-d]
     }
 end
@@ -35,7 +35,7 @@ begin
       when "--debug"
         debug = true
       when "--status"
-        status = true
+        status = argument
     end
   }
 rescue => err
@@ -49,6 +49,9 @@ if essid.nil?
   exit 
 end
 
+# When logout, do nothing
+exit if status == "off"
+
 # Search username and password from ~/.wifispot.yam
 f = open(ENV['HOME'] + "/.wifispot.yam")
 strWifiSettings = f.read()
@@ -59,9 +62,9 @@ password = URI.encode(yamlWifiSettings[essid]['password'])
 
 # Try to access Google and get login url.
 retrycount = 0
-while status  && retrycount < 16 do
+while status && retrycount < 16 do
   begin
-    Socket::getaddrinfo('www.google.com', 'www')
+    Socket::getaddrinfo('vauth.lw.livedoor.com', 'www')
     break
   rescue => err
     retrycount += 1
@@ -71,7 +74,7 @@ p 'Failed to resolve address.' if debug && retrycount >= 16
 
 response = Net::HTTP.get_response(URI.parse('http://www.google.com/'))
 if response.code == "302"
-  loginurl = URI.parse(response['location']+"&login_name="+username+"&password="+password)
+  loginurl = URI.parse('https://vauth.lw.livedoor.com/auth/index?sn=009&name='+username+'&password='+password+'&original_url=http://www.google.com/')
   p loginurl.path if debug
   p loginurl.query if debug
   https = Net::HTTP.new(loginurl.host, loginurl.port)
@@ -79,7 +82,7 @@ if response.code == "302"
   https.verify_mode = OpenSSL::SSL::VERIFY_PEER
   https.verify_depth = 5
   https.start {
-    response = https.get(loginurl.path + '?' + loginurl.query)
+    response = https.post(loginurl.path, loginurl.query)
   }
   p response.code if debug
   p response.body if debug

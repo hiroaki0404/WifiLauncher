@@ -3,7 +3,7 @@
 APPBASE=work/WifiLauncher.app/Contents
 CODEDIR=$(APPBASE)/MacOS
 RESDIR=$(APPBASE)/Resources
-SRC=src/loginwisper.rb src/wifilauncher.pl src/hotspot.rb src/startup
+SRC=src/loginwisper.rb src/wifilauncher.pl src/hotspot.rb src/startup src/livedoorweb.rb
 CONF=sample/sample.wificmd sample/sample.wifispot.yam
 CTRL=jp.group.wifilauncher.plist
 
