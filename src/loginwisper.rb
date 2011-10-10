@@ -82,16 +82,16 @@ if ( status == "on" )
 
 else
   logout_url = nil
-begin
-  open("/tmp/loginwisper.logout.url","r") {|f|
-    logout_url = f.read
-  }
-  open(logout_url) {|f|
-    print "logout status: "
-    puts f.status
-  }
-rescue => err
-end
+  begin
+    open("/tmp/loginwisper.logout.url","r") {|f|
+      logout_url = f.read
+    }
+    open(logout_url) {|f|
+      print "logout status: "
+      puts f.status
+    }
+  rescue => err
+  end
 #  FileUtils.rm("/tmp/loginwisper.logout.url")
 end
 client.print_wispr_messages

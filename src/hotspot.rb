@@ -59,30 +59,40 @@ password = URI.encode(yamlWifiSettings[essid]['password'])
 
 # Try to access Google and get login url.
 retrycount = 0
-while status  && retrycount < 16 do
+while status  && retrycount < 4 do
   begin
     Socket::getaddrinfo('www.google.com', 'www')
     break
   rescue => err
     retrycount += 1
   end
+  sleep retrycount * 4
 end
 p 'Failed to resolve address.' if debug && retrycount >= 16
 
-response = Net::HTTP.get_response(URI.parse('http://www.google.com/'))
-if response.code == "302"
-  loginurl = URI.parse(response['location']+"&login_name="+username+"&password="+password)
-  p loginurl.path if debug
-  p loginurl.query if debug
-  https = Net::HTTP.new(loginurl.host, loginurl.port)
-  https.use_ssl = true
-  https.verify_mode = OpenSSL::SSL::VERIFY_PEER
-  https.verify_depth = 5
-  https.start {
-    response = https.get(loginurl.path + '?' + loginurl.query)
-  }
-  p response.code if debug
-  p response.body if debug
-else
-  p response.code if debug
+retrycount = 0
+while retrycount < 4 do
+  response = Net::HTTP.get_response(URI.parse('http://www.google.com/'))
+  if response.code == "302"
+    loginurl = URI.parse(response['location']+"&login_name="+username+"&password="+password)
+    p loginurl.path if debug
+    p loginurl.query if debug
+    https = Net::HTTP.new(loginurl.host, loginurl.port)
+    https.use_ssl = true
+    https.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    https.verify_depth = 5
+    https.start {
+      response = https.get(loginurl.path + '?' + loginurl.query)
+    }
+    p response.code if debug
+    p response.body if debug
+  elsif response.code == "200"
+    p response.code if debug
+    p response.body if debug
+    break
+  else
+    p response.code if debug
+  end
+  retrycount +=1
+  sleep retrycount * 4
 end

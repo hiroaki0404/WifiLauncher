@@ -72,20 +72,26 @@ while status && retrycount < 16 do
 end
 p 'Failed to resolve address.' if debug && retrycount >= 16
 
-response = Net::HTTP.get_response(URI.parse('http://www.google.com/'))
-if response.code == "302"
-  loginurl = URI.parse('https://vauth.lw.livedoor.com/auth/index?sn=009&name='+username+'&password='+password+'&original_url=http://www.google.com/')
-  p loginurl.path if debug
-  p loginurl.query if debug
-  https = Net::HTTP.new(loginurl.host, loginurl.port)
-  https.use_ssl = true
-  https.verify_mode = OpenSSL::SSL::VERIFY_PEER
-  https.verify_depth = 5
-  https.start {
-    response = https.post(loginurl.path, loginurl.query)
-  }
-  p response.code if debug
-  p response.body if debug
-else
-  p response.code if debug
+retrycount = 0
+while retrycount < 16 do
+  response = Net::HTTP.get_response(URI.parse('http://www.google.com/'))
+  if response.code == "302"
+    loginurl = URI.parse('https://vauth.lw.livedoor.com/auth/index?sn=009&name='+username+'&password='+password+'&original_url=http://www.google.com/')
+    p loginurl.path if debug
+    p loginurl.query if debug
+    https = Net::HTTP.new(loginurl.host, loginurl.port)
+    https.use_ssl = true
+    https.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    https.verify_depth = 5
+    https.start {
+      response = https.post(loginurl.path, loginurl.query)
+    }
+    p response.code if debug
+    p response.body if debug
+  elsif response.code == "200"
+    break
+  else
+    p response.code if debug
+  end
+  retrycount += 1
 end

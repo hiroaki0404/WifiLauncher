@@ -26,7 +26,7 @@ if { ! [ file exists ~/.wificmd ] } {
 if { ! [ file exists ~/.wifispot.yam ] } {
    exec sh -c " /bin/cp $basedir/../Resources/sample.wifispot.yam ~/.wifispot.yam "
 }
-exec sh -c " /usr/bin/chmod 0600 ~/.wifispot.yam "
+exec sh -c " /bin/chmod 0600 ~/.wifispot.yam "
 
 set startup [ file exists ~/Library/LaunchAgents/jp.group.wifilauncher.plist ]
 checkbutton .cb -text "ログイン時に自動起動する" -variable startup -onvalue 1 -offvalue 0
