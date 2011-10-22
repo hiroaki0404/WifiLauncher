@@ -61,7 +61,7 @@ password = URI.encode(yamlWifiSettings[essid]['password'])
 retrycount = 0
 while status  && retrycount < 4 do
   begin
-    Socket::getaddrinfo('www.google.com', 'www')
+    Socket::getaddrinfo('www.google.co.jp', 'www')
     break
   rescue => err
     retrycount += 1
@@ -72,7 +72,7 @@ p 'Failed to resolve address.' if debug && retrycount >= 16
 
 retrycount = 0
 while retrycount < 4 do
-  response = Net::HTTP.get_response(URI.parse('http://www.google.com/'))
+  response = Net::HTTP.get_response(URI.parse('http://www.google.co.jp/'))
   if response.code == "302"
     loginurl = URI.parse(response['location']+"&login_name="+username+"&password="+password)
     p loginurl.path if debug
