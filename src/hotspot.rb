@@ -35,7 +35,7 @@ begin
       when "--debug"
         debug = true
       when "--status"
-        status = true
+        status = argument
     end
   }
 rescue => err
@@ -47,6 +47,11 @@ if essid.nil?
   puts "Please provide essid." 
   usage
   exit 
+end
+
+# Do nothing if leaving from hotspot.
+if status == 'off'
+  exit
 end
 
 # Search username and password from ~/.wifispot.yam
@@ -68,7 +73,8 @@ while status  && retrycount < 4 do
   end
   sleep retrycount * 4
 end
-p 'Failed to resolve address.' if debug && retrycount >= 16
+p 'Failed to resolve address.' if debug && retrycount >= 4
+exit if retrycount >= 4
 
 retrycount = 0
 while retrycount < 4 do
